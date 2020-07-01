@@ -315,6 +315,329 @@ $cat /var/log/rabbitmq/rabbit@ubuntu1-pc.log
 
 Default Node name always "rabbit" and its port 5672
 
+**********************************************************************************************
+
+RabbitMQ server can be started in two mode
+
+1.logger mode
+
+note : if server is running already
+ stop it
+ $sudo service rabbitmq-server stop
+ then
+ $sudo rabbitmq-server
+
+2.detached mode
+  
+  $sudo rabbitmq-server -detached
+  
+*********************************************************************************************
+How to start multple rabbitmq server?
+
+Condition :
+
+1.Each server should run in different port
+2.Each server must have unique name.
+
+
+Solution :  
+
+You have to supply node name and port no differntly when you start server.
+
+RabbitMQ can be configured by using three configurations
+
+1.The first way is to use the RabbitMQ environment variables that lie on the environment variables of the operating system.
+
+2.the second way is through the configuration file provided by RabbitMQ.
+   rabbitmq.conf
+
+3.the last way is to use runtime parameters
+   A special runtime parameters are supplied to rabbitmq server when server runnging.
+ 
+RabbitMQ server provides tools /clis for controlling rabbitmq server.
+
+1.rabbitmqctl 
+ for service management and general operator tasks
+2.rabbitmq-diagnostics
+  for diagnostics and health checking
+3.rabbitmq-plugins
+  for plugin management
+4.rabbitmq-queues 
+   for maintenance tasks on queues, in particular quorum queues
+5.rabbitmq-upgrade
+  for maintenance tasks related to upgrades
+6.rabbitmqadmin 
+ for operator tasks over HTTP API
+
+
+********************************************************************************************
+Environment Variables:
+
+ Environment variables are supplied by RabbitMQ-Built in.
+
+Environment variables are configured 
+         1.inside rabbitmq-env.conf file : static configuration
+         2.during server startup via commandline.
+
+
+common environment variables
+*****************************
+
+RABBITMQ_NODE_IP_ADDRESS:
+	Change this if you only want to bind to one network interface. Binding to two or more interfaces can be set up in the configuration file.
+	Default: an empty string, meaning "bind to all network interfaces".
+
+RABBITMQ_NODE_PORT	
+	Default: 5672.
+
+RABBITMQ_NODENAME
+	The node name should be unique per Erlang-node-and-machine combination. To run multiple nodes, see the clustering guide.
+	Default:
+	Unix*: rabbit@$HOSTNAME
+	Windows: rabbit@%COMPUTERNAME%
+
+RABBITMQ_CONFIG_FILE
+	Main RabbitMQ config file path.
+
+RABBITMQ_ADVANCED_CONFIG_FILE
+	"Advanced" (Erlang term-based) RabbitMQ config file 
+
+RABBITMQ_CONF_ENV_FILE
+	Location of the file that contains environment variable definitions (without the RABBITMQ_ prefix).
+   default
+	Ubuntu and Debian: /etc/rabbitmq/rabbitmq-env.conf
+
+RABBITMQ_MNESIA_BASE
+	This base directory contains sub-directories for the RabbitMQ server's node database, message store and cluster state files, one for each node, unless RABBITMQ_MNESIA_DIR is set explicitly.
+
+  default:
+	Ubuntu and Debian packages: /var/lib/rabbitmq/mnesia/
+
+RABBITMQ_MNESIA_DIR
+	The directory where this RabbitMQ node's data is stored. This s a schema database, message stores, cluster member information and other persistent node state.
+
+RABBITMQ_PLUGINS_DIR
+	The list of directories where plugin archive files are located and extracted from. This is PATH-like variable, where different paths are separated by an OS-specific separator (: for Unix, ; for Windows). Plugins can be installed to any of the directories listed here. Must not contain any characters mentioned in the path restriction section.
+
+	Ubuntu and Debian packages: /var/lib/rabbitmq/plugins
+
+Lab:
+
+Environment variables can be set using:
+
+1.via file : rabbitmq-env.conf 
+
+# Example rabbitmq-env.conf file entries. Note that the variables
+# do not have the RABBITMQ_ prefix.
+#
+# Overrides node name
+NODENAME=bunny@myhost
+
+# Specifies new style config file location
+CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf
+
+# Specifies advanced config file location
+ADVANCED_CONFIG_FILE=/etc/rabbitmq/advanced.config
+
+
+
+Lab:
+
+ $ sudo vi  /etc/rabbitmq/rabbitmq-env.conf
+
+
+Press i - insert mode
+
+type 
+NODENAME=SGENNODE-BNG
+
+press escap key
+
+press shift and :
+
+:wq!
+
+****************************************************************************************
+
+Suppling node name and port via command line:
+
+sudo RABBITMQ_NODE_PORT=5674 RABBITMQ_NODENAME=mynode-1 rabbitmq-server
+
+********************************************************************************************
+
+rabbitmq.conf:
+
+rabbitmq server provides ready made template 
+
+
+ $ sudo vi  /etc/rabbitmq/rabbitmq.conf
+
+1.via file : rabbitmq-env.conf 
+
+# Example rabbitmq-env.conf file entries. Note that the variables
+# do not have the RABBITMQ_ prefix.
+#
+# Overrides node name
+NODENAME=bunny@myhost
+
+# Specifies new style config file location
+CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf
+
+# Specifies advanced config file location
+ADVANCED_CONFIG_FILE=/etc/rabbitmq/advanced.config
+
+
+setting config file location via command line
+
+sudo RABBITMQ_CONFIG_FILE=/bserver/rabbitmq/rabbitmq.conf RABBITMQ_NODE_PORT=5674
+RABBITMQ_NODENAME=mynode-1 rabbitmq-server
+
+********************************************************************************************
+Rabbit Management Console:
+
+WebApplication , used to monitor and adminstrator RabbitMQ servers.
+Management Application we call as "Virutal Host".
+
+First Time When you install , vhost not available, i need to install.
+
+RabbitMQ plugins:
+
+ It is utlity programs, which extends the functionality of rabbitmq core server.
+
+rabbitmq-plugins list
+rabbitmq-plugins enable plname
+rabbitmq-plugins disable plname
+
+The RabbitMQ management plugin provides an HTTP-based API for management and monitoring of RabbitMQ nodes and clusters, along with a browser-based UI and a command line tool
+
+*******************************************************************************************
+
+RabbitMQ Messaging Flow:
+
+Queue :
+
+ It is data structure , where you publish message, and consume consume.
+
+Lab :
+
+1.Create Queue
+
+2.Publish message 
+
+3.Consume Message
+
+
+Queue Type:
+
+1.Classic Queue
+   Normal Queue , used to publish and consume message
+2.Quorum Queue 
+   Distributed Queue, will discuss with Cluster and High availablity
+
+Type of Queue:
+ 1.Durable Queue
+ 2.Transient Queue
+
+Auto Delete;
+  Do you want to delete the queue once , one or all consumers connected and consumed.
+
+
+What is an exchange?
+What are routing keys and bindings? 
+How are exchanges and queues associated with each other?
+When should I use them and how?
+
+Messages are not published directly to a queue. Instead, the producer sends messages to an exchange.
+
+Exchanges are message routing agents, defined by the virtual host within RabbitMQ. 
+
+ An exchange is responsible for routing the messages to different queues with the help of header attributes, bindings, and routing keys.
+
+A binding is a "link" that you set up to bind a queue to an exchange.
+
+
+The routing key is a message attribute the exchange looks at when deciding how to route the message to queues (depending on exchange type).
+
+Exchange Types: Algorthim used by AMQP to route Messages to Queue
+...................................................................
+
+Direct Exchange
+
+1.A direct exchange delivers messages to queues based on a message routing key
+2.The routing key is a message attribute added to the message header by the producer
+3.Think of the routing key as an "address" that the exchange is using to decide how to route the message
+4.A message goes to the queue(s) with the binding key that exactly matches the routing key of the message.
+
+
+1.create Exchange
+  subu.directExchange
+2.create Queues
+   subu.directQueu1
+   subu.directQueu2
+3.setup binding
+   go to exchange 
+  Queue name : subu.directQueu1
+  RoutingKey : gotoheaven
+
+4.Publish Message ,
+  tell routing key
+  headers 
+  Payload
+
+5.Go to Queue
+   select Queue where message was published
+   GetMessage
+
+********************************************************************************************
+Note : there are default Exchanges
+starts with amq.direct  - type direct.
+
+demo.direct
+
+
+
+Fanout Exchange
+
+A fanout exchange copies and routes a received message to all queues that are bound to it regardless of routing keys or pattern matching as with direct and topic exchanges.
+
+The keys provided will simply be ignored.
+
+Lab:
+
+create fanout exchange
+
+create two or three queues
+
+bind exchange with queue.
+
+********************************************************************************************
+Topic 
+  one or many queues based on wild cards
+  - .
+  - *
+  - #
+
+1.Topic exchanges route messages to queues based on wildcard matches between the routing key and the routing pattern, which is specified by the queue binding. 
+
+2.Messages are routed to one or many queues based on a matching between a message routing key and this pattern.
+
+The routing key must be a list of words, delimited by a period (.).
+ Examples are agreements.us and agreements.eu.stockholm which in this case identifies agreements that are set up for a company with offices in lots of different locations.
+
+ The routing patterns may contain an asterisk (“*”) to match a word in a specific position of the routing key (e.g., a routing pattern of "agreements.*.*.b.*" only match routing keys where the first word is "agreements" and the fourth word is "b"). A pound symbol (“#”) indicates a match of zero or more words (e.g., a routing pattern of "agreements.eu.berlin.#" matches any routing keys beginning with "agreements.eu.berlin").
+
+pattern : covid.*
+ covid.news
+ covid.medicine
+ covid.death
+ covid.toal
+ covid.recovery
+
+
+
+
+
+
 
 
 
